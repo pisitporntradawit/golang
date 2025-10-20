@@ -1,0 +1,38 @@
+package config
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/joho/godotenv"
+)
+
+var DB *mongo.Database
+
+func Config() (*mongo.Client) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("err ENV")
+	}
+	uri := os.Getenv("MONGO_URI")
+	if uri == "" {
+		fmt.Println("Not Set URI")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	client ,err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal("Mongo connect Error : ", err)
+		return nil
+	}
+
+	fmt.Println("Connected")
+	return client
+}
