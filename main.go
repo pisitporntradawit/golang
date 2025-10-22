@@ -2,6 +2,7 @@ package main
 
 import (
 	"api/config"
+	"api/module/login"
 	"api/module/user"
 	"api/route"
 )
@@ -13,6 +14,10 @@ func main() {
 	service := user.NewService(repo)
 	controllor := user.NewControllor(service)
 
-	router := route.RouteAPI(controllor)
+	loginRepo := login.NewRepository(DB)
+	loginService := login.NewService(loginRepo)
+	loginControllor := login.NewControllor(loginService)
+
+	router := route.RouteAPI(controllor, loginControllor)
 	router.Run(":30606")
 }

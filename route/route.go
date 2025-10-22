@@ -1,14 +1,20 @@
 package route
 
 import (
+	"api/module/login"
 	"api/module/user"
+
 	"github.com/gin-gonic/gin"
 )
 
-func RouteAPI(controllor *user.Controllor) *gin.Engine{
+func RouteAPI(controllor *user.Controllor,loginControllor *login.Controllor ) *gin.Engine{
 	r := gin.Default()
-	r.GET("/users", controllor.GetUser)
-	r.POST("/users", controllor.InsertUser)
-	r.DELETE("/users/:id", controllor.DeleteUser)
+	userGroup := r.Group("/users")
+	userGroup.GET("", controllor.GetUser)
+	userGroup.GET("/:id", controllor.GetUserByID)
+	userGroup.POST("/", controllor.InsertUser)
+	userGroup.DELETE("/:id", controllor.DeleteUser)
+
+	r.POST("/login", loginControllor.GetLogin)
 	return r
 }

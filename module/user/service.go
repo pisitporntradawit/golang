@@ -3,6 +3,8 @@ package user
 import (
 	"context"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
+
 )
 
 type Service struct {
@@ -15,12 +17,21 @@ func NewService(repo *Repository) *Service {
 	}
 }
 
-func (s *Service) GetUser(ctx context.Context) ([]User, error) {
+func (s *Service) GetUser(ctx context.Context) ([]GetUserModel, error) {
 	return s.repo.GetUser(ctx)
 }
 
-func (s *Service) InsertUser(ctx context.Context, user *User) error {
-	err := s.repo.InsertUser(ctx, user)
+func (s *Service) GetUserByID(ctx context.Context, id string) (*GetUserModel, error){
+	return s.repo.GetUserByID(ctx, id)
+}
+
+func (s *Service) InsertUser(ctx context.Context, user *User, profile *Profile) error {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println("Error Hash ")
+	}
+	user.Password = string(hashPassword)
+	err = s.repo.InsertUser(ctx, user, profile)
 	if err != nil {
 		fmt.Println("InsertUser failed: %w", err)
 	}
