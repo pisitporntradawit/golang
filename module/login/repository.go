@@ -17,9 +17,9 @@ func NewRepository(db *pgxpool.Pool) *Repository{
 	}
 }
 
-func(r *Repository) GetLogin(name string) (*User, error){
+func(r *Repository) GetLogin(ctx context.Context, username string) (*User, error){
 	var user User
-	err := r.DB.QueryRow(context.Background(),"SELECT id, name, password FROM employee WHERE name=$1", name).Scan(&user.ID, &user.Name, &user.Password)
+	err := r.DB.QueryRow(ctx,"SELECT id, username, password FROM employee WHERE username=$1", username).Scan(&user.ID, &user.Username, &user.Password)
 	if err != nil {
 		return nil, errors.New("User not found")
 	}
