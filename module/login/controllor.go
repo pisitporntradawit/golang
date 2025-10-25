@@ -35,6 +35,15 @@ func (ctrl *Controllor) GetLogin(c *gin.Context) {
 			return
 		}
 	}
+	c.SetCookie(
+		"token", // ชื่อ cookie
+		token,   // ค่า token
+		3600*24, // อายุ 1 วัน (วินาที)
+		"/",     // path ทั้งเว็บ
+		"",      // domain (ว่าง = current domain)
+		true,    // secure = true → ใช้กับ HTTPS เท่านั้น
+		true,    // httpOnly = true → JS อ่าน cookie ไม่ได้
+	)
 	fmt.Println("Login Success Username:", req.Username)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
