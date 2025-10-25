@@ -3,13 +3,12 @@ package login
 import (
 	"context"
 	"errors"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var jwtSecret = []byte("Secret")
 
 type Service struct {
 	repo *Repository
@@ -30,12 +29,16 @@ func (s *Service) GetLogin(ctx context.Context, username, password string) (stri
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
 		return "", errors.New("invalid password")
 	}
+
+	//สร้าง Token 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  user.ID,
+		"username": user.Username,
+		"position": user.Position,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWTSECRET")))
 	if err != nil {
 		return "", err
 	}
