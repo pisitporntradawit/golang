@@ -9,5 +9,13 @@ type User struct {
 	ID       uuid.UUID `json:"id"`
 	Username string    `json:"username"`
 	Password string    `json:"password"`
-	Position string    `json:"position"`
+	Roleid   string    `json:"roleid"`
+	Rolename string    `json:"rolename"`
+}
+
+type UserRole struct {
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Roleid   string    `json:"roleid"`
+	Rolename []string    `json:"rolename"`
 }
