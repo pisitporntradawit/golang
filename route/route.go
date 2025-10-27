@@ -12,8 +12,8 @@ func RouteAPI(controllor *user.Controllor, loginControllor *login.Controllor) *g
 	r.POST("/login", loginControllor.GetLogin)
 	r.Use(middleware.AuthLogin())
 	userGroup := r.Group("/users")
-	userGroup.GET("", middleware.RequireRolesAllow("admin", "eng"),controllor.GetUser)
-	userGroup.GET("/:id", controllor.GetUserByID)
+	userGroup.GET("", middleware.RequireRolesAllow("admin", "manager", "test"),controllor.GetUser)
+	userGroup.GET("/:id", middleware.RequireRolesAllow("user"), controllor.GetUserByID)
 	userGroup.POST("/", controllor.InsertUser)
 	userGroup.DELETE("/:id", controllor.DeleteUser)
 
